@@ -28,7 +28,7 @@ add_executable(chess_console
     pawn.h pawn.cpp
     casteling.h casteling.cpp
     null_piece.h null_piece.cpp
-    main_state_machine.h main_state_machine.cpp
+
 )
 target_link_libraries(chess_console Qt${QT_VERSION_MAJOR}::Core)
 

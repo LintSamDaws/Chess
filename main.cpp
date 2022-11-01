@@ -70,22 +70,15 @@ int main(int argc, char *argv[])
         std::cout << chess64.createFEN() << "\n";
     }
 
-    MainStateMachine myStateMachine;
-    while(true) {
-
-//        myStateMachine::State_Base();
 
 
-        return 0;
-    }
-
-    enum State {
-        Base,
-        MoveCheck,
-        MakeMove,
-        ResultCheck,
-        GameOver
-    };
+//    enum State {
+//        Base,
+//        MoveCheck,
+//        MakeMove,
+//        ResultCheck,
+//        GameOver
+//    };
 
     return 0;
 }
