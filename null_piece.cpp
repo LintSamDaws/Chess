@@ -13,6 +13,6 @@ std::set<int> NullPiece::SetOfPossibleMoves(const std::vector<char> &vecBoardCha
     return {};
 }
 
-bool NullPiece::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar) const {
+bool NullPiece::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const {
     return false;
 }

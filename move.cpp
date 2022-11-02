@@ -862,7 +862,7 @@ std::set<int> Move::pawnThreat(const Move &move, const std::vector<char> &vecBoa
     return setOfPossibleThreats;
 }
 
-std::set<int> Move::setOfPossiblePawnMoves(const Move &move, const std::vector<char> &vecBoardChar) const {
+std::set<int> Move::setOfPossiblePawnMoves(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const {
 
     std::set<int> setOfPossibleMoves;
 
@@ -937,10 +937,10 @@ std::set<int> Move::setOfPossiblePawnMoves(const Move &move, const std::vector<c
     return setOfPossibleMoves;
 }
 
-bool Move::isProperMovePawn(const Move &move, const std::vector<char> &vecBoardChar) const {
+bool Move::isProperMovePawn(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const {
 
     std::set<int> setOfPossibleMoves;
-    setOfPossibleMoves = move.setOfPossiblePawnMoves(move, vecBoardChar);
+    setOfPossibleMoves = move.setOfPossiblePawnMoves(move, vecBoardChar, enPassant);
 
     // If finishCoordinate is in the setOfPossibleMove return true;
     if (setOfPossibleMoves.find(move.finishCoordinate) != setOfPossibleMoves.end()) return true;

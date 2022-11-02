@@ -23,8 +23,8 @@ class Board {
     std::string FEN;
     std::vector<char> vecBoardChar;
     int moveCount_;
+    int enPassant_;
     std::unordered_map<std::string, bool> castlingStates_;
-
     Move* move_;
     BoardState* currentState_;
 
@@ -39,6 +39,8 @@ public:
     void toggle();
     void setState(BoardState& newState);
 
+    void SetEnPassant(int enPassant);
+    int GetEnPassant() const;
     void setMoveCount(int moveCount);
     int GetMoveCount() const;
     void setMove(Move* move);

@@ -4,28 +4,24 @@
 
 #include <iostream>
 #include <string>
-#include <conio.h>
 
 
 void StateMakeMove::enter(Board* board) {
 
-    std::cout << "Entering MakeMove\n";
-    getch();
     board->toggle();
 
 }
 
 void StateMakeMove::toggle(Board* board) {
 
-    std::cout << "Toggling MakeMove\n";
+    // To ask Nick
     Move* move = board->GetMove();
     board->makeMove(*move);
+
     board->setState(StateResultCheck::getInstance());
 }
 
 void StateMakeMove::exit(Board* board) {
-
-    std::cout << "Exiting MakeMove\n";
 
 }
 

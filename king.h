@@ -17,7 +17,7 @@ public:
 
     std::set<int> Threats(const std::vector<char> &vecBoardChar) const override;
     std::set<int> SetOfPossibleMoves(const std::vector<char> &vecBoardChar, int enPassant) const override;
-    bool IsProperMove(const Move &move, const std::vector<char> &vecBoardChar) const override;
+    bool IsProperMove(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const override;
     bool IsKingUnderCheck(const std::vector<char> &vecBoardChar) const;
     bool IsKingUnderCheck(King king, const std::vector<char> &vecBoardChar) const;
 

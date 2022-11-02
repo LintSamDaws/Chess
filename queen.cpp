@@ -262,7 +262,7 @@ std::set<int> Queen::SetOfPossibleMoves(const std::vector<char> &vecBoardChar, i
     return setOfPossibleMoves;
 }
 
-bool Queen::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar) const {
+bool Queen::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const {
 
     std::set<int> setOfPossibleMoves = Threats(vecBoardChar);
 

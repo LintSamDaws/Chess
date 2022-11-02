@@ -6,19 +6,14 @@
 
 #include <iostream>
 #include <string>
-#include <conio.h>
 
 void StateMoveCheck::enter(Board* board) {
 
-    std::cout << "Entering MoveCheck\n";
-    std::cout << "Your notation is " << board->GetMove()->GetNotation() << "\n";
-    getch();
     board->toggle();
 }
 
 void StateMoveCheck::toggle(Board* board) {
 
-    std::cout << "Toggling MoveCheck\n";
     if (board->GetMove()->GetNotation() == "quit") {
         board->setState(StateExit::getInstance());
         return;
@@ -33,8 +28,6 @@ void StateMoveCheck::toggle(Board* board) {
 }
 
 void StateMoveCheck::exit(Board* board) {
-
-    std::cout << "Exiting MoveCheck\n";
 
 }
 

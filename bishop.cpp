@@ -140,7 +140,7 @@ std::set<int> Bishop::SetOfPossibleMoves(const std::vector<char> &vecBoardChar, 
     return setOfPossibleMoves;
 }
 
-bool Bishop::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar) const {
+bool Bishop::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const {
 
     std::set<int> setOfPossibleMoves = Threats(vecBoardChar);
 

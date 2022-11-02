@@ -4,26 +4,34 @@
 
 #include <iostream>
 #include <string>
-#include <conio.h>
 
 void StateResultCheck::enter(Board *board) {
-    std::cout << "Entering ResultCheck\n";
-    getch();
+
     board->toggle();
 }
 
 void StateResultCheck::toggle(Board *board) {
-    std::cout << "Toggling ResultCheck\n";
+
     if (board->IsCheckMate()) {
+        board->printVecBoardChar();
+        std::string winner;
+        if (board->GetMoveCount() % 2 == 1) winner = "White";
+        else winner = "Black";
+        std::cout << "CheckMate! " << winner << " has won.\n";
         board->setState(StateExit::getInstance());
+        return;
     }
-    else {
-        board->setState(StateBase::getInstance());
+    if (board->IsStaleMate()) {
+        board->printVecBoardChar();
+        std::cout << "StaleMate!\nDraw.\n";
+        board->setState(StateExit::getInstance());
+        return;
     }
+    board->setState(StateBase::getInstance());
 }
 
 void StateResultCheck::exit(Board *board) {
-    std::cout << "Exiting ResultCheck\n";
+
 }
 
 BoardState& StateResultCheck::getInstance() {

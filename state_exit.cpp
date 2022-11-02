@@ -2,11 +2,9 @@
 
 #include <iostream>
 #include <string>
-#include <conio.h>
 
 void StateExit::enter(Board *board) {
-    std::cout << "Entering Exit\n";
-    getch();
+
     board->toggle();
 }
 
@@ -15,7 +13,7 @@ void StateExit::toggle(Board *board) {
 }
 
 void StateExit::exit(Board *board) {
-    std::cout << "Exiting Exit\n";
+
 }
 
 BoardState& StateExit::getInstance() {

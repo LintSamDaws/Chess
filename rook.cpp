@@ -153,7 +153,7 @@ std::set<int> Rook::SetOfPossibleMoves(const std::vector<char> &vecBoardChar, in
     return setOfPossibleMoves;
 }
 
-bool Rook::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar) const {
+bool Rook::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const {
 
     std::set<int> setOfPossibleMoves = Threats(vecBoardChar);
 

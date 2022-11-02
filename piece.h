@@ -25,7 +25,7 @@ public:
 
     virtual std::set<int> Threats(const std::vector<char> &vecBoardChar) const = 0;
     virtual std::set<int> SetOfPossibleMoves(const std::vector<char> &vecBoardChar, int enPassant) const = 0;
-    virtual bool IsProperMove(const Move &move, const std::vector<char> &vecBoardChar) const = 0;
+    virtual bool IsProperMove(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const = 0;
 };
 
 #endif // PIECE_H

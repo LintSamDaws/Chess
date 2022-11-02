@@ -133,17 +133,13 @@ std::set<int> Pawn::SetOfPossibleMoves(const std::vector<char> &vecBoardChar, in
     return setOfPossibleMoves;
 }
 
-bool Pawn::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar) const {
+bool Pawn::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const {
 
     std::set<int> setOfPossibleMoves;
-    setOfPossibleMoves = SetOfPossibleMoves(vecBoardChar, move.enPassant);
-
-// Prints setOfPossibleMoves
-//    for (int iter : setOfPossibleMoves) {
-//        std::cout << iter << "\n";
-//    }
+    setOfPossibleMoves = SetOfPossibleMoves(vecBoardChar, enPassant);
 
     // If finishCoordinate is in the setOfPossibleMove return true;
     if (setOfPossibleMoves.find(move.getFinishCoordinate()) != setOfPossibleMoves.end()) return true;
     else    return false;
+
 }

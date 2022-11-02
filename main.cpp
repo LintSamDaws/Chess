@@ -11,8 +11,6 @@
 // Starting position
 #define starting_position "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 
-int Move::enPassant = 0;
-
 int main(int argc, char *argv[])
 {
 

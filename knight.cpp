@@ -353,7 +353,7 @@ std::set<int> Knight::SetOfPossibleMoves(const std::vector<char> &vecBoardChar, 
     return setOfPossibleMoves;
 }
 
-bool Knight::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar) const {
+bool Knight::IsProperMove(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const {
 
     std::set<int> setOfPossibleMoves = Threats(vecBoardChar);
 
