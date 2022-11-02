@@ -1,5 +1,5 @@
 # Chess
 
-GUI
-make able read chess notation
-simulations for test
+GUI<br>
+make able read chess notation<br>
+simulations for test<br>
