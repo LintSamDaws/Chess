@@ -20,7 +20,6 @@
 Board::Board () {
 
     moveCount_ = 0;
-    enPassant_ = 0;
     castlingStates_.insert(std::pair<std::string, bool>("O-O", true));
     castlingStates_.insert(std::pair<std::string, bool>("O-O-O", true));
     castlingStates_.insert(std::pair<std::string, bool>("o-o", true));
@@ -31,7 +30,6 @@ Board::Board (std::string fen) {
     FEN = fen;
     vecBoardChar = FENtoVectorChar(fen);
     // Can be a problem if we are using FEN with next move enPassant
-    enPassant_ = 0;
     if (fen == starting_position) {
         moveCount_ = 0;
         castlingStates_.insert(std::pair<std::string, bool>("O-O", true));
@@ -550,7 +548,6 @@ void Board::makeMoveRook(const Move &move) {
     vecBoardChar[move.getStartCoordinate()] = '0';
     vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
     Move::enPassant = 0;
-    enPassant_ = 0;
     moveCount_++;
     if (move.getStartCoordinate() == 56) castlingStates_["O-O-O"] = false;
     if (move.getStartCoordinate() == 63) castlingStates_["O-O"] = false;
@@ -561,21 +558,18 @@ void Board::makeMoveBishop(const Move &move) {
     vecBoardChar[move.getStartCoordinate()] = '0';
     vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
     Move::enPassant = 0;
-    enPassant_ = 0;
     moveCount_++;
 }
 void Board::makeMoveQueen(const Move &move) {
     vecBoardChar[move.getStartCoordinate()] = '0';
     vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
     Move::enPassant = 0;
-    enPassant_ = 0;
     moveCount_++;
 }
 void Board::makeMoveKnight(const Move &move) {
     vecBoardChar[move.getStartCoordinate()] = '0';
     vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
     Move::enPassant = 0;
-    enPassant_ = 0;
     moveCount_++;
 }
 
@@ -585,16 +579,13 @@ void Board::makeMovePawn(const Move &move) {
     // If en-Passant is possible, set enPassant value = field on the 3rd rank for White, 6th rank for Black
     if (move.getActivePiece() == 'P' && move.getStartCoordinate() / 8 == 6 && move.getFinishCoordinate() / 8 == 4) {
          Move::enPassant = move.getStartCoordinate() - 8;
-         enPassant_ = move.getStartCoordinate() - 8;
     }
     else {
         if (move.getActivePiece() == 'p' && move.getStartCoordinate() / 8 == 1 && move.getFinishCoordinate() / 8 == 3) {
             Move::enPassant = move.getStartCoordinate() + 8;
-            enPassant_ = move.getStartCoordinate() + 8;
         }
         else {
             Move::enPassant = 0;
-            enPassant_ = 0;
         }
     }
 
@@ -656,7 +647,6 @@ void Board::makeMoveKing(const Move &move) {
     vecBoardChar[move.getStartCoordinate()] = '0';
     vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
     Move::enPassant = 0;
-    enPassant_ = 0;
     moveCount_++;
     if (isupper(move.getActivePiece())) {
         castlingStates_["O-O-O"] = false;
@@ -705,7 +695,6 @@ void Board::MakeMoveCastling(const Move &move) {
         }
     }
     Move::enPassant = 0;
-    enPassant_ = 0;
     moveCount_++;
 }
 
@@ -737,7 +726,7 @@ bool Board::IsStaleMate() const {
             if (vecBoardChar[i] != '0' && ((islower(kingName) && islower(vecBoardChar[i])) || (isupper(kingName) && isupper(vecBoardChar[i])))) {
 
                 std::set<int> setOfPossibleMoves;
-                setOfPossibleMoves = activePiece.SetOfPossibleMoves(vecBoardChar, enPassant_);
+                setOfPossibleMoves = activePiece.SetOfPossibleMoves(vecBoardChar, move_->enPassant);
 
                 for (int moveFromSet : setOfPossibleMoves) {
                     // Create testVec just to check the Hero's king is not under the check
@@ -898,7 +887,7 @@ bool Board::IsCheckMate() const {
             if (vecBoardChar[i] != '0' && ((islower(kingName) && islower(vecBoardChar[i])) || (isupper(kingName) && isupper(vecBoardChar[i])))) {
 
                 std::set<int> setOfPossibleMoves;
-                setOfPossibleMoves = activePiece.SetOfPossibleMoves(vecBoardChar, enPassant_);
+                setOfPossibleMoves = activePiece.SetOfPossibleMoves(vecBoardChar, move_->enPassant);
 
                 for (int moveFromSet : setOfPossibleMoves) {
 

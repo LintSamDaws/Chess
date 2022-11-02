@@ -24,19 +24,15 @@ class Board {
     std::vector<char> vecBoardChar;
     int moveCount_;
     std::unordered_map<std::string, bool> castlingStates_;
-    int enPassant_;
 
     Move* move_;
     BoardState* currentState_;
 
 public:
 
-    friend std::ostream& operator<<(std::ostream& stream, const Move& move);
-
     Board ();
     Board (std::string fen);
 
-//    Board();
     void GameOn();
 
     inline BoardState* getCurrentState() const { return currentState_; }
