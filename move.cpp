@@ -8,10 +8,15 @@
 #include <set>
 #include <unordered_map>
 
+std::ostream& operator<<(std::ostream& stream, const Move* move) {
+    stream << move->activePiece << move->startCoordinate << '-' << move->finishCoordinate;
+    return stream;
+}
 
 Move::Move() {}
 Move::Move(std::string move) {
 
+    notation_ = move;
     // The Move is Castling
     // move="O-O" or move="O-O-O" for White // move="o-o" or move="o-o-o" for Black
     // activePiece = 'O' for White or 'o' for Black
@@ -123,6 +128,9 @@ void Move::setStartCoordinate(int coordinate) {
 void Move::setFinishCoordinate(int coordinate) {
     finishCoordinate = coordinate;
 }
+void Move::SetNotation(std::string notation) {
+    notation_ = notation;
+}
 
 char Move::getActivePiece() const {
     return activePiece;
@@ -132,6 +140,15 @@ int Move::getStartCoordinate() const {
 }
 int Move::getFinishCoordinate() const {
     return finishCoordinate;
+}
+std::string Move::GetNotation() const {
+    return notation_;
+}
+
+bool Move::IsLegitNotation(std::string move) const {
+    int size = move.size();
+    if (move[0] == 'O' || move[0] == 'o' || size == 5) return true;
+    else return false;
 }
 
 // Creates the Set of Possible Rook-like Moves
@@ -924,11 +941,6 @@ bool Move::isProperMovePawn(const Move &move, const std::vector<char> &vecBoardC
 
     std::set<int> setOfPossibleMoves;
     setOfPossibleMoves = move.setOfPossiblePawnMoves(move, vecBoardChar);
-
-// Prints setOfPossibleMoves
-//    for (int iter : setOfPossibleMoves) {
-//        std::cout << iter << "\n";
-//    }
 
     // If finishCoordinate is in the setOfPossibleMove return true;
     if (setOfPossibleMoves.find(move.finishCoordinate) != setOfPossibleMoves.end()) return true;

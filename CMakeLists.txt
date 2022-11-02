@@ -28,6 +28,12 @@ add_executable(chess_console
     pawn.h pawn.cpp
     casteling.h casteling.cpp
     null_piece.h null_piece.cpp
+    board_state.h
+    state_base.h state_base.cpp
+    state_move_check.h state_move_check.cpp
+    state_make_move.h state_make_move.cpp
+    state_result_check.h state_result_check.cpp
+    state_exit.h state_exit.cpp
 
 )
 target_link_libraries(chess_console Qt${QT_VERSION_MAJOR}::Core)

@@ -3,7 +3,7 @@
 
 #include "move.h"
 #include "piece.h"
-
+#include "board_state.h"
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -13,24 +13,40 @@
 // Starting position
 #define starting_position "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 
+
+// Forward declaration to resolve circular dependency/include
+class BoardState;
 class Move;
 
 class Board {
-    int file_;
-    int rank_;
+
     std::string FEN;
     std::vector<char> vecBoardChar;
     int moveCount_;
     std::unordered_map<std::string, bool> castlingStates_;
     int enPassant_;
 
+    Move* move_;
+    BoardState* currentState_;
+
 public:
 
+    friend std::ostream& operator<<(std::ostream& stream, const Move& move);
+
     Board ();
-    Board (int file, int rank);
-    Board (int file, int rank, std::string fen);
+    Board (std::string fen);
+
+//    Board();
+    void GameOn();
+
+    inline BoardState* getCurrentState() const { return currentState_; }
+    void toggle();
+    void setState(BoardState& newState);
+
     void setMoveCount(int moveCount);
     int GetMoveCount() const;
+    void setMove(Move* move);
+    Move* GetMove() const;
     void setFEN(std::string fen);
     std::string getFEN() const;
     void setVecBoardChar(std::vector<char> vec);

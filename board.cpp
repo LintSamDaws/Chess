@@ -13,19 +13,12 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
-//#include <stdexcept>
+
+#include "state_base.h"
 
 
-namespace {
-int sum(int a, int b) { return a+b; }
+Board::Board () {
 
-}
-
-
-Board::Board () {}
-Board::Board (int file, int rank) {
-    file_ = file;
-    rank_ = rank;
     moveCount_ = 0;
     enPassant_ = 0;
     castlingStates_.insert(std::pair<std::string, bool>("O-O", true));
@@ -33,9 +26,8 @@ Board::Board (int file, int rank) {
     castlingStates_.insert(std::pair<std::string, bool>("o-o", true));
     castlingStates_.insert(std::pair<std::string, bool>("o-o-o", true));
 }
-Board::Board (int file, int rank, std::string fen) {
-    file_ = file;
-    rank_ = rank;
+Board::Board (std::string fen) {
+
     FEN = fen;
     vecBoardChar = FENtoVectorChar(fen);
     // Can be a problem if we are using FEN with next move enPassant
@@ -47,6 +39,33 @@ Board::Board (int file, int rank, std::string fen) {
         castlingStates_.insert(std::pair<std::string, bool>("o-o", true));
         castlingStates_.insert(std::pair<std::string, bool>("o-o-o", true));
     }
+    move_ = nullptr;
+    currentState_ = &StateBase::getInstance();
+}
+
+// Start of the Game
+void Board::GameOn() {
+    currentState_->enter(this);
+}
+
+void Board::setState(BoardState& newState)
+{
+    currentState_->exit(this);  // do stuff before we change state
+    currentState_ = &newState;  // actually change states now
+    currentState_->enter(this); // do stuff after we change state
+}
+
+void Board::toggle()
+{
+    // Delegate the task of determining the next state to the current state
+    currentState_->toggle(this);
+}
+
+void Board::setMove(Move* move) {
+    move_ = move;
+}
+Move* Board::GetMove() const {
+    return move_;
 }
 
 void Board::setMoveCount(int moveCount) {
