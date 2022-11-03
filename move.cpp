@@ -8,8 +8,8 @@
 #include <set>
 #include <unordered_map>
 
-std::ostream& operator<<(std::ostream& stream, const Move* move) {
-    stream << move->activePiece << move->startCoordinate << '-' << move->finishCoordinate;
+std::ostream& operator<<(std::ostream& stream, const Move move) {
+    stream << move.activePiece << move.startCoordinate << '-' << move.finishCoordinate;
     return stream;
 }
 
@@ -111,12 +111,6 @@ Move::Move(std::string move) {
             break;
         }
     }
-}
-
-void Move::setMove(const Move &move) {
-    activePiece = move.activePiece;
-    startCoordinate = move.startCoordinate;
-    finishCoordinate = move.finishCoordinate;
 }
 
 void Move::setActivePiece(char piece) {

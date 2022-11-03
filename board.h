@@ -18,6 +18,12 @@
 class BoardState;
 class Move;
 
+enum class GameResult { OnAction,
+                        Draw,
+                        WhiteWon,
+                        BlackWon,
+                        ForcedQuit};
+
 class Board {
 
     std::string FEN;
@@ -25,8 +31,10 @@ class Board {
     int moveCount_;
     int enPassant_;
     std::unordered_map<std::string, bool> castlingStates_;
-    Move* move_;
+    Move move_;
     BoardState* currentState_;
+    GameResult gameResult_;
+
 
 public:
 
@@ -37,14 +45,16 @@ public:
 
     inline BoardState* getCurrentState() const { return currentState_; }
     void toggle();
-    void setState(BoardState& newState);
+    void setState(BoardState &newState);
 
     void SetEnPassant(int enPassant);
     int GetEnPassant() const;
+    void SetGameResult(GameResult gameResult);
+    GameResult GetGameResult() const;
     void setMoveCount(int moveCount);
     int GetMoveCount() const;
-    void setMove(Move* move);
-    Move* GetMove() const;
+    void setMove(Move &move);
+    Move GetMove() const;
     void setFEN(std::string fen);
     std::string getFEN() const;
     void setVecBoardChar(std::vector<char> vec);
@@ -53,7 +63,7 @@ public:
     void printVecBoardChar(const std::vector<char>& vecChar) const;
     void printVecBoardChar() const;
     void printFEN(std::string fen);
-    void makeMove(const Move &move);
+    void makeMove();
     void makeMove2(const Move &move);
     void makeMoveRook(const Move &move);
     void makeMoveBishop(const Move &move);

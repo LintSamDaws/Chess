@@ -3,17 +3,31 @@
 #include <iostream>
 #include <string>
 
-void StateExit::enter(Board *board) {
+void StateExit::toggle(Board &board) {
 
-    board->toggle();
-}
+    std::cout << "Exit\n";
 
-void StateExit::toggle(Board *board) {
-    std::cout << "The Game is Over\n";
-}
-
-void StateExit::exit(Board *board) {
-
+    switch (board.GetGameResult()) {
+    case GameResult::ForcedQuit: {
+        std::cout << "Force Quitting\n";
+        break;
+    }
+    case GameResult::Draw: {
+        board.printVecBoardChar();
+        std::cout << "Draw!\n";
+        break;
+    }
+    case GameResult::WhiteWon: {
+        board.printVecBoardChar();
+        std::cout << "White has won!\n";
+        break;
+    }
+    case GameResult::BlackWon: {
+        board.printVecBoardChar();
+        std::cout << "Black has won!\n";
+        break;
+    }
+    }
 }
 
 BoardState& StateExit::getInstance() {

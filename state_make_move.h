@@ -8,9 +8,7 @@
 class StateMakeMove : public BoardState
 {
 public:
-    void enter(Board* board);
-    void toggle(Board* board);
-    void exit(Board* board);
+    void toggle(Board& board);
     static BoardState& getInstance();
 
 private:

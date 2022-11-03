@@ -17,7 +17,7 @@ class Move {
 
 public:
 
-    friend std::ostream& operator<<(std::ostream& stream, const Move* move);
+    friend std::ostream& operator<<(std::ostream& stream, const Move move);
 
     Move();
     Move(std::string move);

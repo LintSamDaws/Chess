@@ -5,33 +5,27 @@
 #include <iostream>
 #include <string>
 
-void StateResultCheck::enter(Board *board) {
+void StateResultCheck::toggle(Board &board) {
 
-    board->toggle();
-}
+    std::cout << "ResultCheck\n";
 
-void StateResultCheck::toggle(Board *board) {
+    if (board.IsCheckMate()) {
 
-    if (board->IsCheckMate()) {
-        board->printVecBoardChar();
-        std::string winner;
-        if (board->GetMoveCount() % 2 == 1) winner = "White";
-        else winner = "Black";
-        std::cout << "CheckMate! " << winner << " has won.\n";
-        board->setState(StateExit::getInstance());
+        if (board.GetMoveCount() % 2 == 1) {
+            board.SetGameResult(GameResult::WhiteWon);
+        }
+        else {
+            board.SetGameResult(GameResult::BlackWon);
+        }
+        board.setState(StateExit::getInstance());
         return;
     }
-    if (board->IsStaleMate()) {
-        board->printVecBoardChar();
-        std::cout << "StaleMate!\nDraw.\n";
-        board->setState(StateExit::getInstance());
+    if (board.IsStaleMate()) {
+        board.SetGameResult(GameResult::Draw);
+        board.setState(StateExit::getInstance());
         return;
     }
-    board->setState(StateBase::getInstance());
-}
-
-void StateResultCheck::exit(Board *board) {
-
+    board.setState(StateBase::getInstance());
 }
 
 BoardState& StateResultCheck::getInstance() {

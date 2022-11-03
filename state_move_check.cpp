@@ -7,28 +7,19 @@
 #include <iostream>
 #include <string>
 
-void StateMoveCheck::enter(Board* board) {
+void StateMoveCheck::toggle(Board &board) {
 
-    board->toggle();
-}
+    std::cout << "MoveCheck\n";
 
-void StateMoveCheck::toggle(Board* board) {
+    std::string quitMove = "quit";
+    if (board.GetMove().GetNotation() == quitMove) {
 
-    if (board->GetMove()->GetNotation() == "quit") {
-        board->setState(StateExit::getInstance());
-        return;
-    }
-
-    if (true) {
-        board->setState(StateMakeMove::getInstance());
+        board.SetGameResult(GameResult::ForcedQuit);
+        board.setState(StateExit::getInstance());
     }
     else {
-        board->setState(StateBase::getInstance());
+        board.setState(StateMakeMove::getInstance());
     }
-}
-
-void StateMoveCheck::exit(Board* board) {
-
 }
 
 BoardState& StateMoveCheck::getInstance()
