@@ -26,7 +26,6 @@ add_executable(chess_console
     knight.h knight.cpp
     queen.h queen.cpp
     pawn.h pawn.cpp
-    casteling.h casteling.cpp
     null_piece.h null_piece.cpp
     board_state.h
     state_base.h state_base.cpp
@@ -34,6 +33,9 @@ add_executable(chess_console
     state_make_move.h state_make_move.cpp
     state_result_check.h state_result_check.cpp
     state_exit.h state_exit.cpp
+    notation_reader.h notation_reader.cpp
+    game_legend.h game_legend.cpp
+    castling.h castling.cpp
 
 )
 target_link_libraries(chess_console Qt${QT_VERSION_MAJOR}::Core)

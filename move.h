@@ -47,11 +47,6 @@ public:
     bool villainKingIsUnderCheck(const Move &move, const std::vector<char> &vecBoardChar) const;
     std::set<int> setOfPossibleKingMoves(const Move &move, const std::vector<char> &vecBoardChar) const;
     bool isProperMoveKing(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool NOTMovedCastling(const Move &move, const std::unordered_map<std::string, bool> &castlingStates) const;
-    bool NoPieceBetweenCastling(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool IsKingUnderCheck(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool IsCastlingSquaresUnderCheck(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool IsCastlingPossible(const Move &move, const std::vector<char> &vecBoardChar, const std::unordered_map<std::string, bool> &castlingStates) const;
 
 
 };

@@ -19,19 +19,16 @@
 
 
 Board::Board () {}
-Board::Board (std::string fen) {
+Board::Board (std::string fen) : gameLegend_(), castling_(fen) {
 
     if (fen == starting_position) {
         FEN = fen;
         vecBoardChar = FENtoVectorChar(fen);
+        vecBoardPiece_ = SetStartingPositionVecBoardPiece();
         moveCount_ = 0;
         enPassant_ = 0;
         currentState_ = &StateBase::getInstance();
         gameResult_ = GameResult::OnAction;
-        castlingStates_.insert(std::pair<std::string, bool>("O-O", true));
-        castlingStates_.insert(std::pair<std::string, bool>("O-O-O", true));
-        castlingStates_.insert(std::pair<std::string, bool>("o-o", true));
-        castlingStates_.insert(std::pair<std::string, bool>("o-o-o", true));
     }
     else {
         FEN = fen;
@@ -50,6 +47,7 @@ void Board::GameOn() {
         }
     }
 }
+
 void Board::setState(BoardState& newState)
 {
     currentState_ = &newState;  // actually change states now
@@ -58,6 +56,15 @@ void Board::toggle()
 {
     // Delegate the task of determining the next state to the current state
     currentState_->toggle(*this);
+}
+
+void Board::SetGameLegend(GameLegend gameLegend)
+{
+    gameLegend_ = gameLegend;
+}
+GameLegend Board::GetGameLegend()
+{
+    return gameLegend_;
 }
 
 void Board::setMove(Move &move) {
@@ -160,6 +167,44 @@ std::vector<char> Board::FENtoVectorChar(std::string fen) {
         }
     }
     return vec;
+}
+
+std::vector<Piece*> Board::SetStartingPositionVecBoardPiece() {
+
+    // start fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    std::vector<Piece*> vec;
+
+    vec.push_back(new Rook('r', 0));
+    vec.push_back(new Knight('n', 1));
+    vec.push_back(new Bishop('b', 2));
+    vec.push_back(new Queen('q', 3));
+    vec.push_back(new King('k', 4));
+    vec.push_back(new Bishop('b', 5));
+    vec.push_back(new Knight('n', 6));
+    vec.push_back(new Rook('r', 7));
+
+    for (int i=8; i<=15; i++) vec.push_back(new Pawn('p', i));
+    // Init. vector<Piece*> in the range [16; 47] with NullPieces (name_ is '0', coordinate_ is i)
+    for (int i=16; i<=47; i++) vec.push_back(new NullPiece('0', i));
+    for (int i=48; i<=55; i++) vec.push_back(new Pawn('P', i));
+
+    vec.push_back(new Rook('R', 56));
+    vec.push_back(new Knight('N', 57));
+    vec.push_back(new Bishop('B', 58));
+    vec.push_back(new Queen('Q', 59));
+    vec.push_back(new King('K', 60));
+    vec.push_back(new Bishop('B', 61));
+    vec.push_back(new Knight('N', 62));
+    vec.push_back(new Rook('R', 63));
+
+    return vec;
+}
+//only for test. Can be deleted
+void Board::PrintVecBoardPiece() {
+    for (auto itr : vecBoardPiece_) {
+        std::cout << itr->GetName() << itr->GetCoordinate() << " ";
+    }
+    std::cout << "\n";
 }
 
 void Board::printVecBoardChar(const std::vector<char>& vecChar) const {
@@ -432,7 +477,7 @@ void Board::makeMove() {
             case 'O':
             case 'o':
             {
-            if (this->move_.IsCastlingPossible(this->move_, vecBoardChar, castlingStates_)) {
+            if (this->castling_.IsCastlingPossible(this->move_, vecBoardChar)) {
                     MakeMoveCastling(this->move_);
             }
             else std::cout << "Such Castling is Invalid\n";
@@ -510,7 +555,7 @@ void Board::makeMove2(const Move &move) {
             case 'O':
             case 'o':
             {
-            if (move.IsCastlingPossible(move, vecBoardChar, castlingStates_)) {
+            if (castling_.IsCastlingPossible(move, vecBoardChar)) {
                     MakeMoveCastling(move);
             }
             else throw std::range_error("Such Castling is Invalid\n");
@@ -566,10 +611,7 @@ void Board::makeMoveRook(const Move &move) {
     this->SetEnPassant(0);
 
     moveCount_++;
-    if (move.getStartCoordinate() == 56) castlingStates_["O-O-O"] = false;
-    if (move.getStartCoordinate() == 63) castlingStates_["O-O"] = false;
-    if (move.getStartCoordinate() == 0) castlingStates_["o-o-o"] = false;
-    if (move.getStartCoordinate() == 7) castlingStates_["o-o"] = false;
+    castling_.SwitchState(move);
 }
 void Board::makeMoveBishop(const Move &move) {
     vecBoardChar[move.getStartCoordinate()] = '0';
@@ -675,14 +717,7 @@ void Board::makeMoveKing(const Move &move) {
     this->SetEnPassant(0);
 
     moveCount_++;
-    if (isupper(move.getActivePiece())) {
-        castlingStates_["O-O-O"] = false;
-        castlingStates_["O-O"] = false;
-    }
-    if (islower(move.getActivePiece())) {
-        castlingStates_["o-o-o"] = false;
-        castlingStates_["o-o"] = false;
-    }
+    castling_.SwitchState(move);
 }
 
 void Board::MakeMoveCastling(const Move &move) {
@@ -723,6 +758,7 @@ void Board::MakeMoveCastling(const Move &move) {
     }
 
     this->SetEnPassant(0);
+    castling_.SwitchState(move);
 
     moveCount_++;
 }
