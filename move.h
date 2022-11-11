@@ -48,7 +48,6 @@ public:
     std::set<int> setOfPossibleKingMoves(const Move &move, const std::vector<char> &vecBoardChar) const;
     bool isProperMoveKing(const Move &move, const std::vector<char> &vecBoardChar) const;
 
-
 };
 
 #endif // MOVE_H

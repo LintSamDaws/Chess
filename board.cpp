@@ -289,162 +289,118 @@ void Board::printFEN(std::string fen) {
     std::cout << "\n";
 }
 
+bool Board::IsHeroKingUnderCheckTestForRNBQP(const Move &move) {
+    // Create testVec just to check the Hero's king is not under the check
+    std::vector<char> testVec = vecBoardChar;
+    testVec[move.getStartCoordinate()] = '0';
+    testVec[move.getFinishCoordinate()] = move.getActivePiece();
+
+    // Create the heroKing object
+    King heroKing;
+    if (islower(move.getActivePiece())) {
+        heroKing.SetName('k');
+        heroKing.SetCoordinate(FindTheKing('k', testVec));
+    }
+    else {
+        heroKing.SetName('K');
+        heroKing.SetCoordinate(FindTheKing('K', testVec));
+    }
+
+    // Check if heroKing is under check
+    if (heroKing.IsKingUnderCheck(testVec)) return true;
+    else return false;
+}
+
 void Board::makeMove() {
 
     try {
-        if (!IsRightMoveOrder(this->move_) && isupper(this->move_.getActivePiece())) throw std::range_error("Wrong Move Order.\nBlack to move!\n");
-        if (!IsRightMoveOrder(this->move_) && islower(this->move_.getActivePiece())) throw std::range_error("Wrong Move Order.\nWhite to move!\n");
+        if (!IsRightMoveOrder(this->move_) && isupper(this->move_.getActivePiece()))
+            throw std::range_error("Wrong Move Order.\nBlack to move!\n");
+        if (!IsRightMoveOrder(this->move_) && islower(this->move_.getActivePiece()))
+            throw std::range_error("Wrong Move Order.\nWhite to move!\n");
 
         // input move is like "pe2-e4" or "Qa1:a8" or "o-o-o" or "O-O"
         if ((this->move_.getActivePiece() != vecBoardChar[this->move_.getStartCoordinate()])
-                && this->move_.getActivePiece() != 'O' && this->move_.getActivePiece() != 'o') throw std::range_error("The Piece is Not There\n");
+                && this->move_.getActivePiece() != 'O' && this->move_.getActivePiece() != 'o')
+            throw std::range_error("The Piece is Not There\n");
 
         switch (this->move_.getActivePiece()) {
+
             case 'R':
             case 'r':
             {
             if (this->move_.isProperMoveRook(this->move_, vecBoardChar)) {
 
-                // Create testVec just to check the Hero's king is not under the check
-                std::vector<char> testVec = vecBoardChar;
-                testVec[this->move_.getStartCoordinate()] = '0';
-                testVec[this->move_.getFinishCoordinate()] = this->move_.getActivePiece();
-
-                King king;
-                if (islower(this->move_.getActivePiece())) {
-                    king.SetName('k');
-                    king.SetCoordinate(FindTheKing('k', testVec));
-                }
-                else {
-                    king.SetName('K');
-                    king.SetCoordinate(FindTheKing('K', testVec));
-                }
-
-                if (!king.IsKingUnderCheck(testVec)) {
-                    // The move is being made
+                // If the target square is safe the move is being made
+                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
                     makeMoveRook(this->move_);
                 }
-                else std::cout << "The Move is Invalid\nThe King is under check\n";
+                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
             }
-            else std::cout << "The Move is Invalid\n";
+            else throw std::range_error("The Move is Invalid\n");
             break;
             }
+
             case 'B':
             case 'b':
             {
             if (this->move_.isProperMoveBishop(this->move_, vecBoardChar)) {
 
-                // Create testVec just to check the Hero's king is not under the check
-                std::vector<char> testVec = vecBoardChar;
-                testVec[this->move_.getStartCoordinate()] = '0';
-                testVec[this->move_.getFinishCoordinate()] = this->move_.getActivePiece();
-
-                King king;
-                if (islower(this->move_.getActivePiece())) {
-                    king.SetName('k');
-                    king.SetCoordinate(FindTheKing('k', testVec));
-                }
-                else {
-                    king.SetName('K');
-                    king.SetCoordinate(FindTheKing('K', testVec));
-                }
-
-                if (!king.IsKingUnderCheck(testVec)) {
-                    // The move is being made
+                // If the target square is safe the move is being made
+                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
                     makeMoveBishop(this->move_);
                 }
-                else std::cout << "The Move is Invalid\nThe King is under check\n";
+                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
             }
-            else std::cout << "The Move is Invalid\n";
+            else throw std::range_error("The Move is Invalid\n");
             break;
             }
+
             case 'Q':
             case 'q':
             {
             if (this->move_.isProperMoveQueen(this->move_, vecBoardChar)) {
 
-                // Create testVec just to check the Hero's king is not under the check
-                std::vector<char> testVec = vecBoardChar;
-                testVec[this->move_.getStartCoordinate()] = '0';
-                testVec[this->move_.getFinishCoordinate()] = this->move_.getActivePiece();
-
-                King king;
-                if (islower(this->move_.getActivePiece())) {
-                    king.SetName('k');
-                    king.SetCoordinate(FindTheKing('k', testVec));
-                }
-                else {
-                    king.SetName('K');
-                    king.SetCoordinate(FindTheKing('K', testVec));
-                }
-
-                if (!king.IsKingUnderCheck(testVec)) {
-                    // The move is being made
+                // If the target square is safe the move is being made
+                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
                     makeMoveQueen(this->move_);
                 }
-                else std::cout << "The Move is Invalid\nThe King is under check\n";
+                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
             }
-            else std::cout << "The Move is Invalid\n";
+            else throw std::range_error("The Move is Invalid\n");
             break;
             }
+
             case 'N':
             case 'n':
             {
             if (this->move_.isProperMoveKnight(this->move_, vecBoardChar)) {
 
-                // Create testVec just to check the Hero's king is not under the check
-                std::vector<char> testVec = vecBoardChar;
-                testVec[this->move_.getStartCoordinate()] = '0';
-                testVec[this->move_.getFinishCoordinate()] = this->move_.getActivePiece();
-
-                King king;
-                if (islower(this->move_.getActivePiece())) {
-                    king.SetName('k');
-                    king.SetCoordinate(FindTheKing('k', testVec));
-                }
-                else {
-                    king.SetName('K');
-                    king.SetCoordinate(FindTheKing('K', testVec));
-                }
-
-                if (!king.IsKingUnderCheck(testVec)) {
-                    // The move is being made
+                // If the target square is safe the move is being made
+                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
                     makeMoveKnight(this->move_);
                 }
-                else std::cout << "The Move is Invalid\nThe King is under check\n";
+                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
             }
-            else std::cout << "The Move is Invalid\n";
+            else throw std::range_error("The Move is Invalid\n");
             break;
             }
+
             case 'P':
             case 'p':
             {
-                if (this->move_.isProperMovePawn(this->move_, vecBoardChar, this->GetEnPassant())) {
+            if (this->move_.isProperMovePawn(this->move_, vecBoardChar, this->GetEnPassant())) {
 
-                    // Create testVec just to check the Hero's king is not under the check
-                    std::vector<char> testVec = vecBoardChar;
-                    testVec[this->move_.getStartCoordinate()] = '0';
-                    testVec[this->move_.getFinishCoordinate()] = this->move_.getActivePiece();
-
-                    King king;
-                    if (islower(this->move_.getActivePiece())) {
-                        king.SetName('k');
-                        king.SetCoordinate(FindTheKing('k', testVec));
-                    }
-                    else {
-                        king.SetName('K');
-                        king.SetCoordinate(FindTheKing('K', testVec));
-                    }
-
-                    if (!king.IsKingUnderCheck(testVec)) {
-                        // The move is being made
-                        makeMovePawn(this->move_);
-                    }
-                    else std::cout << "The Move is Invalid\nThe King is under check\n";
+                // If the target square is safe the move is being made
+                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
+                    makeMovePawn(this->move_);
                 }
-                else std::cout << "The Move is Invalid\n";
-                break;
+                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
             }
+            else throw std::range_error("The Move is Invalid\n");
+            break;
+            }
+
             case 'K':
             case 'k':
             {
@@ -474,19 +430,20 @@ void Board::makeMove() {
             else std::cout << "The Move is Invalid\n";
             break;
             }
+
             case 'O':
             case 'o':
             {
             if (this->castling_.IsCastlingPossible(this->move_, vecBoardChar)) {
                     MakeMoveCastling(this->move_);
             }
-            else std::cout << "Such Castling is Invalid\n";
-
+            else throw std::range_error("Such Castling is Invalid\n");
             break;
             }
+
             default:
             {
-                std::cout << "No such Piece\n";
+                throw std::range_error("No such Piece\n");
                 break;
             }
         }

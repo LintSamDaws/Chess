@@ -99,6 +99,7 @@ public:
 
 
 
+    bool IsHeroKingUnderCheckTestForRNBQP(const Move &move);
 };
 
 
