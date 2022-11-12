@@ -28,18 +28,18 @@ enum class GameResult { OnAction,
 
 class Board {
 
-    std::string FEN;
-    std::vector<char> vecBoardChar;
+    std::string fen_;
+    std::vector<char> vecBoardChar_;
     std::vector<Piece*> vecBoardPiece_;
-    int moveCount_;
     int enPassant_;
+    // Stores the last Move
     Move move_;
+    // StateMachine
     BoardState* currentState_;
     GameResult gameResult_;
+    // Consists Move Count, Game Notation, Game Story in vector<Move>
     GameLegend gameLegend_;
-
     Castling castling_;
-
 
 public:
 
@@ -49,7 +49,7 @@ public:
     void GameOn();
 
     void SetGameLegend(GameLegend gameLegend);
-    GameLegend GetGameLegend();
+    GameLegend GetGameLegend() const;
 
     inline BoardState* getCurrentState() const { return currentState_; }
     void toggle();
@@ -76,6 +76,8 @@ public:
     void printVecBoardChar() const;
     void printFEN(std::string fen);
 
+    // temp
+    void moveCountPlusPlus();
     void makeMove();
     void makeMove2(const Move &move);
 
@@ -84,22 +86,25 @@ public:
     void makeMoveQueen(const Move &move);
     void makeMoveKnight(const Move &move);
     void makeMovePawn(const Move &move);
+    void makeMoveKing(const Move &move);
+    void MakeMoveCastling(const Move &move);
+
     char pawnPromotion(const Move &move);
     int FindTheKing(char name, const std::vector<char>& vecChar) const;
     int FindTheKing(char name) const;
-    void makeMoveKing(const Move &move);
 
-    void MakeMoveCastling(const Move &move);
-    bool IsStaleMate() const;
     Piece& GetSameColorPiece(char kingName, int coordinate) const;
+
+    bool IsStaleMate() const;
     bool IsCheckMate() const;
+
     std::string createFEN() const;
     std::string createFEN(const std::vector<char>& vecChar) const;
+
     bool IsRightMoveOrder(const Move &move) const;
 
+    bool IsHeroKingUnderCheckTest(const Move &move);
 
-
-    bool IsHeroKingUnderCheckTestForRNBQP(const Move &move);
 };
 
 

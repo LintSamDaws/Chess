@@ -22,23 +22,24 @@ Board::Board () {}
 Board::Board (std::string fen) : gameLegend_(), castling_(fen) {
 
     if (fen == starting_position) {
-        FEN = fen;
-        vecBoardChar = FENtoVectorChar(fen);
+        fen_ = fen;
+        vecBoardChar_ = FENtoVectorChar(fen);
         vecBoardPiece_ = SetStartingPositionVecBoardPiece();
-        moveCount_ = 0;
+        gameLegend_.SetMoveCount(0);
         enPassant_ = 0;
         currentState_ = &StateBase::getInstance();
         gameResult_ = GameResult::OnAction;
     }
     else {
-        FEN = fen;
-        vecBoardChar = FENtoVectorChar(fen);
+        fen_ = fen;
+        vecBoardChar_ = FENtoVectorChar(fen);
         // Can be a problem if we are using FEN with next move enPassant_
     }
 }
 
 // Start of the Game. State Machine
 void Board::GameOn() {
+    std::cout << "Game on!\n";
     while(true) {
         this->toggle();
         if (currentState_ == &StateExit::getInstance()) {
@@ -62,7 +63,7 @@ void Board::SetGameLegend(GameLegend gameLegend)
 {
     gameLegend_ = gameLegend;
 }
-GameLegend Board::GetGameLegend()
+GameLegend Board::GetGameLegend() const
 {
     return gameLegend_;
 }
@@ -72,13 +73,6 @@ void Board::setMove(Move &move) {
 }
 Move Board::GetMove() const {
     return move_;
-}
-
-void Board::setMoveCount(int moveCount) {
-    moveCount_ = moveCount;
-}
-int Board::GetMoveCount() const {
-    return moveCount_;
 }
 
 void Board::SetEnPassant(int enPassant) {
@@ -96,18 +90,18 @@ GameResult Board::GetGameResult() const {
 }
 
 void Board::setFEN(std::string fen) {
-    FEN = fen;
-    vecBoardChar = FENtoVectorChar(fen);
+    fen_ = fen;
+    vecBoardChar_ = FENtoVectorChar(fen);
 }
 std::string Board::getFEN() const {
-    return FEN;
+    return fen_;
 }
 
 void Board::setVecBoardChar(std::vector<char> vec){
-    vecBoardChar = vec;
+    vecBoardChar_ = vec;
 }
 std::vector<char> Board::getVecBoardChar() const {
-    return vecBoardChar;
+    return vecBoardChar_;
 }
 
 std::vector<char> Board::FENtoVectorChar(std::string fen) {
@@ -225,7 +219,7 @@ void Board::printVecBoardChar() const {
         if (count % 8 == 0) std::cout << "\n";
         count++;
 
-        std::cout << vecBoardChar[i] << " ";
+        std::cout << vecBoardChar_[i] << " ";
     }
     std::cout << "\n\n";
 }
@@ -289,9 +283,9 @@ void Board::printFEN(std::string fen) {
     std::cout << "\n";
 }
 
-bool Board::IsHeroKingUnderCheckTestForRNBQP(const Move &move) {
+bool Board::IsHeroKingUnderCheckTest(const Move &move) {
     // Create testVec just to check the Hero's king is not under the check
-    std::vector<char> testVec = vecBoardChar;
+    std::vector<char> testVec = vecBoardChar_;
     testVec[move.getStartCoordinate()] = '0';
     testVec[move.getFinishCoordinate()] = move.getActivePiece();
 
@@ -314,25 +308,16 @@ bool Board::IsHeroKingUnderCheckTestForRNBQP(const Move &move) {
 void Board::makeMove() {
 
     try {
-        if (!IsRightMoveOrder(this->move_) && isupper(this->move_.getActivePiece()))
-            throw std::range_error("Wrong Move Order.\nBlack to move!\n");
-        if (!IsRightMoveOrder(this->move_) && islower(this->move_.getActivePiece()))
-            throw std::range_error("Wrong Move Order.\nWhite to move!\n");
-
-        // input move is like "pe2-e4" or "Qa1:a8" or "o-o-o" or "O-O"
-        if ((this->move_.getActivePiece() != vecBoardChar[this->move_.getStartCoordinate()])
-                && this->move_.getActivePiece() != 'O' && this->move_.getActivePiece() != 'o')
-            throw std::range_error("The Piece is Not There\n");
 
         switch (this->move_.getActivePiece()) {
 
             case 'R':
             case 'r':
             {
-            if (this->move_.isProperMoveRook(this->move_, vecBoardChar)) {
+            if (this->move_.isProperMoveRook(this->move_, vecBoardChar_)) {
 
                 // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
+                if (!IsHeroKingUnderCheckTest(this->move_)) {
                     makeMoveRook(this->move_);
                 }
                 else throw std::range_error("The Move is Invalid\nThe King is under check\n");
@@ -344,10 +329,10 @@ void Board::makeMove() {
             case 'B':
             case 'b':
             {
-            if (this->move_.isProperMoveBishop(this->move_, vecBoardChar)) {
+            if (this->move_.isProperMoveBishop(this->move_, vecBoardChar_)) {
 
                 // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
+                if (!IsHeroKingUnderCheckTest(this->move_)) {
                     makeMoveBishop(this->move_);
                 }
                 else throw std::range_error("The Move is Invalid\nThe King is under check\n");
@@ -359,10 +344,10 @@ void Board::makeMove() {
             case 'Q':
             case 'q':
             {
-            if (this->move_.isProperMoveQueen(this->move_, vecBoardChar)) {
+            if (this->move_.isProperMoveQueen(this->move_, vecBoardChar_)) {
 
                 // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
+                if (!IsHeroKingUnderCheckTest(this->move_)) {
                     makeMoveQueen(this->move_);
                 }
                 else throw std::range_error("The Move is Invalid\nThe King is under check\n");
@@ -374,10 +359,10 @@ void Board::makeMove() {
             case 'N':
             case 'n':
             {
-            if (this->move_.isProperMoveKnight(this->move_, vecBoardChar)) {
+            if (this->move_.isProperMoveKnight(this->move_, vecBoardChar_)) {
 
                 // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
+                if (!IsHeroKingUnderCheckTest(this->move_)) {
                     makeMoveKnight(this->move_);
                 }
                 else throw std::range_error("The Move is Invalid\nThe King is under check\n");
@@ -389,10 +374,10 @@ void Board::makeMove() {
             case 'P':
             case 'p':
             {
-            if (this->move_.isProperMovePawn(this->move_, vecBoardChar, this->GetEnPassant())) {
+            if (this->move_.isProperMovePawn(this->move_, vecBoardChar_, this->GetEnPassant())) {
 
                 // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTestForRNBQP(this->move_)) {
+                if (!IsHeroKingUnderCheckTest(this->move_)) {
                     makeMovePawn(this->move_);
                 }
                 else throw std::range_error("The Move is Invalid\nThe King is under check\n");
@@ -404,37 +389,22 @@ void Board::makeMove() {
             case 'K':
             case 'k':
             {
-            if (this->move_.isProperMoveKing(this->move_, vecBoardChar)) {
+            if (this->move_.isProperMoveKing(this->move_, vecBoardChar_)) {
 
-                // Create testVec just to check the Hero's king is not under the check
-                std::vector<char> testVec = vecBoardChar;
-                testVec[this->move_.getStartCoordinate()] = '0';
-                testVec[this->move_.getFinishCoordinate()] = this->move_.getActivePiece();
-
-                King king;
-                if (islower(this->move_.getActivePiece())) {
-                    king.SetName('k');
-                    king.SetCoordinate(FindTheKing('k', testVec));
-                }
-                else {
-                    king.SetName('K');
-                    king.SetCoordinate(FindTheKing('K', testVec));
-                }
-
-                if (!king.IsKingUnderCheck(testVec)) {
-                    // The move is being made
+                // If the target square is safe the move is being made
+                if (!IsHeroKingUnderCheckTest(this->move_)) {
                     makeMoveKing(this->move_);
                 }
-                else std::cout << "The Move is Invalid\nThe King is under check\n";
+                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
             }
-            else std::cout << "The Move is Invalid\n";
+            else throw std::range_error("The Move is Invalid\n");
             break;
             }
 
             case 'O':
             case 'o':
             {
-            if (this->castling_.IsCastlingPossible(this->move_, vecBoardChar)) {
+            if (this->castling_.IsCastlingPossible(this->move_, vecBoardChar_)) {
                     MakeMoveCastling(this->move_);
             }
             else throw std::range_error("Such Castling is Invalid\n");
@@ -459,7 +429,7 @@ void Board::makeMove2(const Move &move) {
         if (!IsRightMoveOrder(move) && islower(move.getActivePiece())) throw std::range_error("Wrong Move Order.\nWhite to move!\n");
 
         // input move is like "pe2-e4" or "Qa1:a8" or "o-o-o" or "O-O"
-        if ((move.getActivePiece() != vecBoardChar[move.getStartCoordinate()])
+        if ((move.getActivePiece() != vecBoardChar_[move.getStartCoordinate()])
                 && move.getActivePiece() != 'O' && move.getActivePiece() != 'o') throw std::range_error("The Piece is Not There\n");
 
         static NullPiece nullPiece;
@@ -512,7 +482,7 @@ void Board::makeMove2(const Move &move) {
             case 'O':
             case 'o':
             {
-            if (castling_.IsCastlingPossible(move, vecBoardChar)) {
+            if (castling_.IsCastlingPossible(move, vecBoardChar_)) {
                     MakeMoveCastling(move);
             }
             else throw std::range_error("Such Castling is Invalid\n");
@@ -528,10 +498,10 @@ void Board::makeMove2(const Move &move) {
         activePiece->SetName(move.getActivePiece());
         activePiece->SetCoordinate(move.getStartCoordinate());
 
-        if (activePiece->IsProperMove(move, vecBoardChar, this->GetEnPassant())) {
+        if (activePiece->IsProperMove(move, vecBoardChar_, this->GetEnPassant())) {
 
             // Create testVec just to check the Hero's king is not under the check
-            std::vector<char> testVec = vecBoardChar;
+            std::vector<char> testVec = vecBoardChar_;
             testVec[move.getStartCoordinate()] = '0';
             testVec[move.getFinishCoordinate()] = move.getActivePiece();
 
@@ -547,8 +517,8 @@ void Board::makeMove2(const Move &move) {
 
             if (!king.IsKingUnderCheck(testVec)) {
                 // The move is being made
-                vecBoardChar[move.getStartCoordinate()] = '0';
-                vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
+                vecBoardChar_[move.getStartCoordinate()] = '0';
+                vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
                 this->SetEnPassant(0);
             }
             else throw std::range_error("The Move is Invalid\nThe King is under check\n");
@@ -561,40 +531,46 @@ void Board::makeMove2(const Move &move) {
     }
 }
 
+// temp
+void Board::moveCountPlusPlus() {
+    GameLegend legend = this->GetGameLegend();
+    legend.MoveCountPlusPlus();
+    this->SetGameLegend(legend);
+}
+
 void Board::makeMoveRook(const Move &move) {
-    vecBoardChar[move.getStartCoordinate()] = '0';
-    vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
+    vecBoardChar_[move.getStartCoordinate()] = '0';
+    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
 
     this->SetEnPassant(0);
 
-    moveCount_++;
+    this->moveCountPlusPlus();
     castling_.SwitchState(move);
 }
 void Board::makeMoveBishop(const Move &move) {
-    vecBoardChar[move.getStartCoordinate()] = '0';
-    vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
+    vecBoardChar_[move.getStartCoordinate()] = '0';
+    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
 
     this->SetEnPassant(0);
 
-    moveCount_++;
+    this->moveCountPlusPlus();
 }
 void Board::makeMoveQueen(const Move &move) {
-    vecBoardChar[move.getStartCoordinate()] = '0';
-    vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
+    vecBoardChar_[move.getStartCoordinate()] = '0';
+    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
 
     this->SetEnPassant(0);
 
-    moveCount_++;
+    this->moveCountPlusPlus();
 }
 void Board::makeMoveKnight(const Move &move) {
-    vecBoardChar[move.getStartCoordinate()] = '0';
-    vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
+    vecBoardChar_[move.getStartCoordinate()] = '0';
+    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
 
     this->SetEnPassant(0);
 
-    moveCount_++;
+    this->moveCountPlusPlus();
 }
-
 void Board::makeMovePawn(const Move &move) {
 
     // Check for en-Passant Opportunity on the next move.
@@ -617,23 +593,74 @@ void Board::makeMovePawn(const Move &move) {
     if ((move.getActivePiece() == 'P' && move.getFinishCoordinate() / 8 == 0) || (move.getActivePiece() == 'p' && move.getFinishCoordinate() / 8 == 7)) {
         char promotion;
         promotion = pawnPromotion(move);
-        vecBoardChar[move.getStartCoordinate()] = '0';
-        vecBoardChar[move.getFinishCoordinate()] = promotion;
+        vecBoardChar_[move.getStartCoordinate()] = '0';
+        vecBoardChar_[move.getFinishCoordinate()] = promotion;
     }
     else {
-        vecBoardChar[move.getStartCoordinate()] = '0';
+        vecBoardChar_[move.getStartCoordinate()] = '0';
 
         // Manage en-Passand case for White
-        if (vecBoardChar[move.getFinishCoordinate()] == '0' && move.getActivePiece() == 'P') {
-            vecBoardChar[move.getFinishCoordinate() + 8] = '0';
+        if (vecBoardChar_[move.getFinishCoordinate()] == '0' && move.getActivePiece() == 'P') {
+            vecBoardChar_[move.getFinishCoordinate() + 8] = '0';
         }
         // for Black
-        if (vecBoardChar[move.getFinishCoordinate()] =='0' && move.getActivePiece() == 'p') {
-            vecBoardChar[move.getFinishCoordinate() - 8] = '0';
+        if (vecBoardChar_[move.getFinishCoordinate()] =='0' && move.getActivePiece() == 'p') {
+            vecBoardChar_[move.getFinishCoordinate() - 8] = '0';
         }
-        vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
+        vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
     }
-    moveCount_++;
+    this->moveCountPlusPlus();
+}
+void Board::makeMoveKing(const Move &move) {
+    vecBoardChar_[move.getStartCoordinate()] = '0';
+    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
+
+    this->SetEnPassant(0);
+
+    this->moveCountPlusPlus();
+    castling_.SwitchState(move);
+}
+void Board::MakeMoveCastling(const Move &move) {
+
+    // Castling for White
+    if (isupper(move.getActivePiece())) {
+        // Long Castling
+        if (move.getFinishCoordinate() == 56) {
+            vecBoardChar_[56] = '0';
+            vecBoardChar_[60] = '0';
+            vecBoardChar_[58] = 'K';
+            vecBoardChar_[59] = 'R';
+        }
+        // Short
+        else {
+            vecBoardChar_[60] = '0';
+            vecBoardChar_[63] = '0';
+            vecBoardChar_[62] = 'K';
+            vecBoardChar_[61] = 'R';
+        }
+    }
+    // Castling for Black
+    else {
+        // Long Castling
+        if (move.getFinishCoordinate() == 0) {
+            vecBoardChar_[0] = '0';
+            vecBoardChar_[4] = '0';
+            vecBoardChar_[2] = 'K';
+            vecBoardChar_[3] = 'R';
+        }
+        // Short
+        else {
+            vecBoardChar_[4] = '0';
+            vecBoardChar_[7] = '0';
+            vecBoardChar_[6] = 'k';
+            vecBoardChar_[5] = 'r';
+        }
+    }
+
+    this->SetEnPassant(0);
+    castling_.SwitchState(move);
+
+    this->moveCountPlusPlus();
 }
 
 char Board::pawnPromotion(const Move &move) {
@@ -661,115 +688,11 @@ int Board::FindTheKing(char name, const std::vector<char>& vecChar) const {
 int Board::FindTheKing(char name) const {
     int res;
     for (int i=0; i<64; i++) {
-        if (vecBoardChar[i] == name) {
+        if (vecBoardChar_[i] == name) {
             res = i;
         }
     }
     return res;
-}
-void Board::makeMoveKing(const Move &move) {
-    vecBoardChar[move.getStartCoordinate()] = '0';
-    vecBoardChar[move.getFinishCoordinate()] = move.getActivePiece();
-
-    this->SetEnPassant(0);
-
-    moveCount_++;
-    castling_.SwitchState(move);
-}
-
-void Board::MakeMoveCastling(const Move &move) {
-
-    // Castling for White
-    if (isupper(move.getActivePiece())) {
-        // Long Castling
-        if (move.getFinishCoordinate() == 56) {
-            vecBoardChar[56] = '0';
-            vecBoardChar[60] = '0';
-            vecBoardChar[58] = 'K';
-            vecBoardChar[59] = 'R';
-        }
-        // Short
-        else {
-            vecBoardChar[60] = '0';
-            vecBoardChar[63] = '0';
-            vecBoardChar[62] = 'K';
-            vecBoardChar[61] = 'R';
-        }
-    }
-    // Castling for Black
-    else {
-        // Long Castling
-        if (move.getFinishCoordinate() == 0) {
-            vecBoardChar[0] = '0';
-            vecBoardChar[4] = '0';
-            vecBoardChar[2] = 'K';
-            vecBoardChar[3] = 'R';
-        }
-        // Short
-        else {
-            vecBoardChar[4] = '0';
-            vecBoardChar[7] = '0';
-            vecBoardChar[6] = 'k';
-            vecBoardChar[5] = 'r';
-        }
-    }
-
-    this->SetEnPassant(0);
-    castling_.SwitchState(move);
-
-    moveCount_++;
-}
-
-bool Board::IsStaleMate() const {
-
-    // Spot the King. White or Black
-    int kingCoordinate;
-    char kingName;
-    if (moveCount_ % 2 == 0) {
-        kingCoordinate = FindTheKing('K');
-        kingName = 'K';
-    }
-    else {
-        kingCoordinate = FindTheKing('k');
-        kingName = 'k';
-    }
-
-    // If the King is under check there is no Stalemate
-    King king(kingName, kingCoordinate);
-    if (king.IsKingUnderCheck(vecBoardChar)) {
-        return false;
-    }
-    // Check if one of all other pieces has the Possible Move
-    else {
-        for (int i=0; i<64; i++) {
-
-            Piece& activePiece = GetSameColorPiece(kingName, i);
-
-            if (vecBoardChar[i] != '0' && ((islower(kingName) && islower(vecBoardChar[i])) || (isupper(kingName) && isupper(vecBoardChar[i])))) {
-
-                std::set<int> setOfPossibleMoves;
-                setOfPossibleMoves = activePiece.SetOfPossibleMoves(vecBoardChar, this->GetEnPassant());
-
-                for (int moveFromSet : setOfPossibleMoves) {
-                    // Create testVec just to check the Hero's king is not under the check
-                    std::vector<char> testVec = vecBoardChar;
-                    testVec[activePiece.GetCoordinate()] = '0';
-                    testVec[moveFromSet] = activePiece.GetName();
-
-                    // In case of King Move
-                    if (activePiece.GetName() == 'K' || activePiece.GetName() == 'k') {
-                        King newKing(activePiece.GetName(), activePiece.GetCoordinate());
-                        newKing.SetCoordinate(moveFromSet);
-                        if (!newKing.IsKingUnderCheck(testVec)) return false;
-                    }
-                    else {
-                        if (!king.IsKingUnderCheck(testVec)) return false;
-                    }
-                }
-            }
-        }
-    }
-    return true;
 }
 
 Piece& Board::GetSameColorPiece(char kingName, int coordinate) const {
@@ -784,7 +707,7 @@ Piece& Board::GetSameColorPiece(char kingName, int coordinate) const {
     static Pawn pawn;
     static King kingToMove;
 
-    switch (vecBoardChar[coordinate]) {
+    switch (vecBoardChar_[coordinate]) {
         case 'R':
         {
             if (isupper(kingName)) {
@@ -874,17 +797,68 @@ Piece& Board::GetSameColorPiece(char kingName, int coordinate) const {
             break;
         }
     }
-    activePiece->SetName(vecBoardChar[coordinate]);
+    activePiece->SetName(vecBoardChar_[coordinate]);
     activePiece->SetCoordinate(coordinate);
     return *activePiece;
 }
 
+bool Board::IsStaleMate() const {
+
+    // Spot the King. White or Black
+    int kingCoordinate;
+    char kingName;
+    if (this->GetGameLegend().GetMoveCount() % 2 == 0) {
+        kingCoordinate = FindTheKing('K');
+        kingName = 'K';
+    }
+    else {
+        kingCoordinate = FindTheKing('k');
+        kingName = 'k';
+    }
+
+    // If the King is under check there is no Stalemate
+    King king(kingName, kingCoordinate);
+    if (king.IsKingUnderCheck(vecBoardChar_)) {
+        return false;
+    }
+    // Check if one of all other pieces has the Possible Move
+    else {
+        for (int i=0; i<64; i++) {
+
+            Piece& activePiece = GetSameColorPiece(kingName, i);
+
+            if (vecBoardChar_[i] != '0' && ((islower(kingName) && islower(vecBoardChar_[i])) || (isupper(kingName) && isupper(vecBoardChar_[i])))) {
+
+                std::set<int> setOfPossibleMoves;
+                setOfPossibleMoves = activePiece.SetOfPossibleMoves(vecBoardChar_, this->GetEnPassant());
+
+                for (int moveFromSet : setOfPossibleMoves) {
+                    // Create testVec just to check the Hero's king is not under the check
+                    std::vector<char> testVec = vecBoardChar_;
+                    testVec[activePiece.GetCoordinate()] = '0';
+                    testVec[moveFromSet] = activePiece.GetName();
+
+                    // In case of King Move
+                    if (activePiece.GetName() == 'K' || activePiece.GetName() == 'k') {
+                        King newKing(activePiece.GetName(), activePiece.GetCoordinate());
+                        newKing.SetCoordinate(moveFromSet);
+                        if (!newKing.IsKingUnderCheck(testVec)) return false;
+                    }
+                    else {
+                        if (!king.IsKingUnderCheck(testVec)) return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
 bool Board::IsCheckMate() const {
 
     // Spot the King. White or Black. Initialize it.
     int kingCoordinate;
     char kingName;
-    if (moveCount_ % 2 == 0) {
+    if (this->GetGameLegend().GetMoveCount() % 2 == 0) {
         kingCoordinate = FindTheKing('K');
         kingName = 'K';
     }
@@ -897,7 +871,7 @@ bool Board::IsCheckMate() const {
     King king(kingName, kingCoordinate);
 
 
-    if (!king.IsKingUnderCheck(vecBoardChar)) {
+    if (!king.IsKingUnderCheck(vecBoardChar_)) {
         return false;
     }
     // Check if the King or one of other pieces has the Possible Move
@@ -906,15 +880,15 @@ bool Board::IsCheckMate() const {
 
             Piece& activePiece = GetSameColorPiece(kingName, i);
 
-            if (vecBoardChar[i] != '0' && ((islower(kingName) && islower(vecBoardChar[i])) || (isupper(kingName) && isupper(vecBoardChar[i])))) {
+            if (vecBoardChar_[i] != '0' && ((islower(kingName) && islower(vecBoardChar_[i])) || (isupper(kingName) && isupper(vecBoardChar_[i])))) {
 
                 std::set<int> setOfPossibleMoves;
-                setOfPossibleMoves = activePiece.SetOfPossibleMoves(vecBoardChar, this->GetEnPassant());
+                setOfPossibleMoves = activePiece.SetOfPossibleMoves(vecBoardChar_, this->GetEnPassant());
 
                 for (int moveFromSet : setOfPossibleMoves) {
 
                     // Create testVec just to check the Hero's king is not under the check
-                    std::vector<char> testVec = vecBoardChar;
+                    std::vector<char> testVec = vecBoardChar_;
                     testVec[activePiece.GetCoordinate()] = '0';
                     testVec[moveFromSet] = activePiece.GetName();
 
@@ -956,12 +930,12 @@ std::string Board::createFEN() const {
     std::string fen = "";
     int count = 0;
     for (int i=0; i<64; i++) {
-        if (vecBoardChar[i] != '0') {
-            fen += vecBoardChar[i];
+        if (vecBoardChar_[i] != '0') {
+            fen += vecBoardChar_[i];
         }
         else {
             count++;
-            if ((i != 63 && vecBoardChar[i+1] != '0') || (i % 8 == 7 && count != 0)) {
+            if ((i != 63 && vecBoardChar_[i+1] != '0') || (i % 8 == 7 && count != 0)) {
                 std::string temp = std::to_string(count);
                 fen += temp;
                 count = 0;
@@ -993,7 +967,8 @@ std::string Board::createFEN(const std::vector<char>& vecChar) const {
 }
 
 bool Board::IsRightMoveOrder(const Move &move) const {
-    if ((moveCount_ % 2 == 0 && isupper(move.getActivePiece())) || (moveCount_ % 2 == 1 && islower(move.getActivePiece()))) {
+    if ((this->GetGameLegend().GetMoveCount() % 2 == 0 && isupper(move.getActivePiece()))
+            || (this->GetGameLegend().GetMoveCount() % 2 == 1 && islower(move.getActivePiece()))) {
         return true;
     }
     else return false;

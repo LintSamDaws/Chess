@@ -10,6 +10,7 @@ void StateMakeMove::toggle(Board &board) {
 
     std::cout << "MakeMove\n";
     board.makeMove();
+//    std::cout << board.GetGameLegend().GetMoveCount() << " " << board.GetMove().GetNotation() << "\n";
 
     board.setState(StateResultCheck::getInstance());
 }

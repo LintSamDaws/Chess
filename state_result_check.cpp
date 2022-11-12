@@ -11,7 +11,7 @@ void StateResultCheck::toggle(Board &board) {
 
     if (board.IsCheckMate()) {
 
-        if (board.GetMoveCount() % 2 == 1) {
+        if (board.GetGameLegend().GetMoveCount() % 2 == 1) {
             board.SetGameResult(GameResult::WhiteWon);
         }
         else {

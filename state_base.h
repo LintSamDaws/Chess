@@ -11,6 +11,8 @@ public:
     void toggle(Board& board);
     static BoardState& getInstance();
 
+    void GetMoveFromUser(Board &board);
+
 private:
     StateBase() {}
     StateBase(const StateBase& other);
