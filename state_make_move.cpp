@@ -6,7 +6,7 @@
 #include <string>
 
 
-void StateMakeMove::toggle(Board &board) {
+void StateMakeMove::SwitchState(Board &board) {
 
     std::cout << "MakeMove\n";
     board.makeMove();

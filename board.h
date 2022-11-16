@@ -52,7 +52,7 @@ public:
     GameLegend GetGameLegend() const;
 
     inline BoardState* getCurrentState() const { return currentState_; }
-    void toggle();
+    void SwitchState();
     void setState(BoardState &newState);
 
     void SetEnPassant(int enPassant);

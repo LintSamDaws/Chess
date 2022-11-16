@@ -41,9 +41,9 @@ Board::Board (std::string fen) : gameLegend_(), castling_(fen) {
 void Board::GameOn() {
     std::cout << "Game on!\n";
     while(true) {
-        this->toggle();
+        this->SwitchState();
         if (currentState_ == &StateExit::getInstance()) {
-            this->toggle();
+            this->SwitchState();
             break;
         }
     }
@@ -53,10 +53,10 @@ void Board::setState(BoardState& newState)
 {
     currentState_ = &newState;  // actually change states now
 }
-void Board::toggle()
+void Board::SwitchState()
 {
     // Delegate the task of determining the next state to the current state
-    currentState_->toggle(*this);
+    currentState_->SwitchState(*this);
 }
 
 void Board::SetGameLegend(GameLegend gameLegend)
@@ -314,7 +314,8 @@ void Board::makeMove() {
             case 'R':
             case 'r':
             {
-            if (this->move_.isProperMoveRook(this->move_, vecBoardChar_)) {
+            Rook* rook = new Rook(this->move_.getActivePiece(), this->move_.getStartCoordinate());
+            if (rook->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
 
                 // If the target square is safe the move is being made
                 if (!IsHeroKingUnderCheckTest(this->move_)) {
@@ -329,7 +330,8 @@ void Board::makeMove() {
             case 'B':
             case 'b':
             {
-            if (this->move_.isProperMoveBishop(this->move_, vecBoardChar_)) {
+            Bishop* bishop = new Bishop(this->move_.getActivePiece(), this->move_.getStartCoordinate());
+            if (bishop->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
 
                 // If the target square is safe the move is being made
                 if (!IsHeroKingUnderCheckTest(this->move_)) {
@@ -344,7 +346,8 @@ void Board::makeMove() {
             case 'Q':
             case 'q':
             {
-            if (this->move_.isProperMoveQueen(this->move_, vecBoardChar_)) {
+            Queen* queen = new Queen(this->move_.getActivePiece(), this->move_.getStartCoordinate());
+            if (queen->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
 
                 // If the target square is safe the move is being made
                 if (!IsHeroKingUnderCheckTest(this->move_)) {
@@ -359,7 +362,8 @@ void Board::makeMove() {
             case 'N':
             case 'n':
             {
-            if (this->move_.isProperMoveKnight(this->move_, vecBoardChar_)) {
+            Knight* knight = new Knight(this->move_.getActivePiece(), this->move_.getStartCoordinate());
+            if (knight->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
 
                 // If the target square is safe the move is being made
                 if (!IsHeroKingUnderCheckTest(this->move_)) {
@@ -374,7 +378,8 @@ void Board::makeMove() {
             case 'P':
             case 'p':
             {
-            if (this->move_.isProperMovePawn(this->move_, vecBoardChar_, this->GetEnPassant())) {
+            Pawn* pawn = new Pawn(this->move_.getActivePiece(), this->move_.getStartCoordinate());
+            if (pawn->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
 
                 // If the target square is safe the move is being made
                 if (!IsHeroKingUnderCheckTest(this->move_)) {
@@ -389,7 +394,8 @@ void Board::makeMove() {
             case 'K':
             case 'k':
             {
-            if (this->move_.isProperMoveKing(this->move_, vecBoardChar_)) {
+            King* king = new King(this->move_.getActivePiece(), this->move_.getStartCoordinate());
+            if (king->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
 
                 // If the target square is safe the move is being made
                 if (!IsHeroKingUnderCheckTest(this->move_)) {
@@ -425,12 +431,6 @@ void Board::makeMove() {
 void Board::makeMove2(const Move &move) {
 
     try {
-        if (!IsRightMoveOrder(move) && isupper(move.getActivePiece())) throw std::range_error("Wrong Move Order.\nBlack to move!\n");
-        if (!IsRightMoveOrder(move) && islower(move.getActivePiece())) throw std::range_error("Wrong Move Order.\nWhite to move!\n");
-
-        // input move is like "pe2-e4" or "Qa1:a8" or "o-o-o" or "O-O"
-        if ((move.getActivePiece() != vecBoardChar_[move.getStartCoordinate()])
-                && move.getActivePiece() != 'O' && move.getActivePiece() != 'o') throw std::range_error("The Piece is Not There\n");
 
         static NullPiece nullPiece;
         Piece* activePiece = &nullPiece;

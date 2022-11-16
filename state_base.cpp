@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-void StateBase::toggle(Board &board) {
+void StateBase::SwitchState(Board &board) {
 
     board.printVecBoardChar();
     GetMoveFromUser(board);

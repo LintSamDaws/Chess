@@ -9,7 +9,7 @@
 #include <cctype>
 #include <string>
 
-void StateMoveCheck::toggle(Board &board) {
+void StateMoveCheck::SwitchState(Board &board) {
 
     std::cout << "MoveCheck\n";
 
@@ -45,7 +45,7 @@ void StateMoveCheck::toggle(Board &board) {
         // Checking GameLegend notation
         GameLegend gameLegend = board.GetGameLegend();
         // Adds even wrong moves FIX IT
-        gameLegend.AddMove(board.GetMove(), board.GetGameLegend().GetMoveCount());
+        gameLegend.AddMove(board.GetMove());
         board.SetGameLegend(gameLegend);
 
 //        // Checking reading from file

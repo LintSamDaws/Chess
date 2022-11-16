@@ -30,9 +30,10 @@ public:
     void SetMoveCount (int moveCount);
     int GetMoveCount() const;
 
+    // Not used yet
     void MoveCountPlusPlus();
 
-    void AddMove(Move move, int moveCount);
+    void AddMove(Move move);
 
     void PrintGameLegendNotation();
 

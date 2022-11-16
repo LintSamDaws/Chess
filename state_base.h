@@ -8,7 +8,7 @@
 class StateBase : public BoardState
 {
 public:
-    void toggle(Board& board);
+    void SwitchState(Board& board);
     static BoardState& getInstance();
 
     void GetMoveFromUser(Board &board);

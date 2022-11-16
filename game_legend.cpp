@@ -38,13 +38,14 @@ int GameLegend::GetMoveCount() const
     return moveCount_;
 }
 
+// Not used yet
 void GameLegend::MoveCountPlusPlus() {
     moveCount_++;
 }
 
-void GameLegend::AddMove(Move move, int moveCount)
+void GameLegend::AddMove(Move move)
 {
-    notationLine_ += std::to_string(moveCount + 1) + ". " + move.GetNotation() + "\n";
+    notationLine_ += std::to_string(moveCount_ + 1) + ". " + move.GetNotation() + "\n";
     moveVector_.push_back(move);
 }
 

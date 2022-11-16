@@ -8,7 +8,7 @@ class Board;
 class BoardState
 {
 public:
-    virtual void toggle(Board& board) = 0;
+    virtual void SwitchState(Board& board) = 0;
     virtual ~BoardState() {}
 };
 

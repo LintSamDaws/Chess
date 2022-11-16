@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-void StateResultCheck::toggle(Board &board) {
+void StateResultCheck::SwitchState(Board &board) {
 
     std::cout << "ResultCheck\n";
 

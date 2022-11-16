@@ -3,9 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
-#include <set>
-#include <unordered_map>
 
 class Board;
 
@@ -34,19 +31,6 @@ public:
     std::string GetNotation() const;
 
     bool IsLegitNotation(std::string move) const;
-    std::set<int> linearThreat(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool isProperMoveRook(const Move &move, const std::vector<char> &vecBoardChar) const;
-    std::set<int> diagonalThreat(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool isProperMoveBishop(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool isProperMoveQueen(const Move &move, const std::vector<char> &vecBoardChar) const;
-    std::set<int> knightThreat(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool isProperMoveKnight(const Move &move, const std::vector<char> &vecBoardChar) const;
-    std::set<int> pawnThreat(const Move &move, const std::vector<char> &vecBoardChar) const;
-    std::set<int> setOfPossiblePawnMoves(const Move &move, const std::vector<char> &vecBoardChar, int enPassant) const;
-    bool isProperMovePawn(const Move &move, const std::vector<char> &vecBoardChar,int enPassant) const;
-    bool villainKingIsUnderCheck(const Move &move, const std::vector<char> &vecBoardChar) const;
-    std::set<int> setOfPossibleKingMoves(const Move &move, const std::vector<char> &vecBoardChar) const;
-    bool isProperMoveKing(const Move &move, const std::vector<char> &vecBoardChar) const;
 
 };
 

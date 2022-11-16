@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-void StateExit::toggle(Board &board) {
+void StateExit::SwitchState(Board &board) {
 
     std::cout << "Exit\n";
 
