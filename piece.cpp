@@ -23,9 +23,4 @@ int Piece::GetCoordinate() const {
     return coordinate_;
 }
 
-// The Piece changes its coordinate_
-void Piece::MakeMove(const Move &move)
-{
-    coordinate_ = move.getFinishCoordinate();
-}
 

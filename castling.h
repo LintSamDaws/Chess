@@ -28,6 +28,7 @@ public:
     bool NOTMovedCastling(const Move &move) const;
     bool IsCastlingPossible(const Move &move, const std::vector<char> &vecBoardChar) const;
     void SwitchState(const Move &move);
+    void MakeMoveCastling(const Move &move, std::vector<char> &vecBoardChar);
 };
 
 #endif // CASTLING_H

@@ -130,3 +130,43 @@ void Castling::SwitchState(const Move &move) {
     if (move.getActivePiece() == 'R' && move.getStartCoordinate() == 63) castlingStates_.at("O-O") = false;
     if (move.getActivePiece() == 'R' && move.getStartCoordinate() == 56) castlingStates_.at("O-O-O") = false;
 }
+
+void Castling::MakeMoveCastling(const Move &move, std::vector<char> &vecBoardChar) {
+
+//    // Castling for White
+//    if (isupper(move.getActivePiece())) {
+//        // Long Castling
+//        if (move.getFinishCoordinate() == 56) {
+//            vecBoardChar[56] = '0';
+//            vecBoardChar[60] = '0';
+//            vecBoardChar[58] = 'K';
+//            vecBoardChar[59] = 'R';
+//        }
+//        // Short
+//        else {
+//            vecBoardChar[60] = '0';
+//            vecBoardChar[63] = '0';
+//            vecBoardChar[62] = 'K';
+//            vecBoardChar[61] = 'R';
+//        }
+//    }
+//    // Castling for Black
+//    else {
+//        // Long Castling
+//        if (move.getFinishCoordinate() == 0) {
+//            vecBoardChar[0] = '0';
+//            vecBoardChar[4] = '0';
+//            vecBoardChar[2] = 'K';
+//            vecBoardChar[3] = 'R';
+//        }
+//        // Short
+//        else {
+//            vecBoardChar[4] = '0';
+//            vecBoardChar[7] = '0';
+//            vecBoardChar[6] = 'k';
+//            vecBoardChar[5] = 'r';
+//        }
+//    }
+
+//    this->SetEnPassant(0);
+}

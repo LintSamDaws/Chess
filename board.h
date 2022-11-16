@@ -48,28 +48,33 @@ public:
 
     void GameOn();
 
-    void SetGameLegend(GameLegend gameLegend);
-    GameLegend GetGameLegend() const;
-
     inline BoardState* getCurrentState() const { return currentState_; }
     void SwitchState();
     void setState(BoardState &newState);
 
+    void SetGameLegend(GameLegend gameLegend);
+    GameLegend GetGameLegend() const;
+
     void SetEnPassant(int enPassant);
     int GetEnPassant() const;
+
     void SetGameResult(GameResult gameResult);
     GameResult GetGameResult() const;
+
     void setMoveCount(int moveCount);
     int GetMoveCount() const;
+
     void setMove(Move &move);
     Move GetMove() const;
+
     void setFEN(std::string fen);
     std::string getFEN() const;
+
     void setVecBoardChar(std::vector<char> vec);
     std::vector<char> getVecBoardChar() const;
 
     std::vector<char> FENtoVectorChar(std::string fen);
-    std::vector<Piece *> SetStartingPositionVecBoardPiece();
+    std::vector<Piece*> SetStartingPositionVecBoardPiece();
     void PrintVecBoardPiece();
 
     void printVecBoardChar(const std::vector<char>& vecChar) const;
@@ -78,21 +83,17 @@ public:
 
     // temp
     void moveCountPlusPlus();
-    void makeMove();
-    void makeMove2(const Move &move);
 
-    void makeMoveRook(const Move &move);
-    void makeMoveBishop(const Move &move);
-    void makeMoveQueen(const Move &move);
-    void makeMoveKnight(const Move &move);
-    void makeMovePawn(const Move &move);
-    void makeMoveKing(const Move &move);
+    void makeMove();
+
+    void makeMovePiece(const Move &move);
     void MakeMoveCastling(const Move &move);
 
     char pawnPromotion(const Move &move);
     int FindTheKing(char name, const std::vector<char>& vecChar) const;
     int FindTheKing(char name) const;
 
+    Piece& GetPieceObject(const Move &move) const;
     Piece& GetSameColorPiece(char kingName, int coordinate) const;
 
     bool IsStaleMate() const;

@@ -309,223 +309,31 @@ void Board::makeMove() {
 
     try {
 
-        switch (this->move_.getActivePiece()) {
-
-            case 'R':
-            case 'r':
-            {
-            Rook* rook = new Rook(this->move_.getActivePiece(), this->move_.getStartCoordinate());
-            if (rook->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
-
-                // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTest(this->move_)) {
-                    makeMoveRook(this->move_);
-                }
-                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
-            }
-            else throw std::range_error("The Move is Invalid\n");
-            break;
-            }
-
-            case 'B':
-            case 'b':
-            {
-            Bishop* bishop = new Bishop(this->move_.getActivePiece(), this->move_.getStartCoordinate());
-            if (bishop->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
-
-                // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTest(this->move_)) {
-                    makeMoveBishop(this->move_);
-                }
-                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
-            }
-            else throw std::range_error("The Move is Invalid\n");
-            break;
-            }
-
-            case 'Q':
-            case 'q':
-            {
-            Queen* queen = new Queen(this->move_.getActivePiece(), this->move_.getStartCoordinate());
-            if (queen->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
-
-                // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTest(this->move_)) {
-                    makeMoveQueen(this->move_);
-                }
-                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
-            }
-            else throw std::range_error("The Move is Invalid\n");
-            break;
-            }
-
-            case 'N':
-            case 'n':
-            {
-            Knight* knight = new Knight(this->move_.getActivePiece(), this->move_.getStartCoordinate());
-            if (knight->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
-
-                // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTest(this->move_)) {
-                    makeMoveKnight(this->move_);
-                }
-                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
-            }
-            else throw std::range_error("The Move is Invalid\n");
-            break;
-            }
-
-            case 'P':
-            case 'p':
-            {
-            Pawn* pawn = new Pawn(this->move_.getActivePiece(), this->move_.getStartCoordinate());
-            if (pawn->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
-
-                // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTest(this->move_)) {
-                    makeMovePawn(this->move_);
-                }
-                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
-            }
-            else throw std::range_error("The Move is Invalid\n");
-            break;
-            }
-
-            case 'K':
-            case 'k':
-            {
-            King* king = new King(this->move_.getActivePiece(), this->move_.getStartCoordinate());
-            if (king->IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
-
-                // If the target square is safe the move is being made
-                if (!IsHeroKingUnderCheckTest(this->move_)) {
-                    makeMoveKing(this->move_);
-                }
-                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
-            }
-            else throw std::range_error("The Move is Invalid\n");
-            break;
-            }
-
-            case 'O':
-            case 'o':
-            {
+        // Castling
+        if (move_.getActivePiece() == 'O' || move_.getActivePiece() == 'o') {
             if (this->castling_.IsCastlingPossible(this->move_, vecBoardChar_)) {
-                    MakeMoveCastling(this->move_);
+                MakeMoveCastling(this->move_);
+                this->moveCountPlusPlus();
+                castling_.SwitchState(move_);
             }
             else throw std::range_error("Such Castling is Invalid\n");
-            break;
+        }
+        // every other move
+        else {
+            Piece& activePiece = this->GetPieceObject(move_);
+            if (activePiece.IsProperMove(this->move_, vecBoardChar_, enPassant_)) {
+                // Final Check
+                // If the target square is safe the move is being made
+                if (!IsHeroKingUnderCheckTest(this->move_)) {
+                    makeMovePiece(this->move_);
+                    this->moveCountPlusPlus();
+                    castling_.SwitchState(move_);
+                }
+                else throw std::range_error("The Move is Invalid\nThe King is under check\n");
             }
-
-            default:
-            {
-                throw std::range_error("No such Piece\n");
-                break;
-            }
+            else throw std::range_error("The Move is Invalid\n");
         }
     }
-    catch (const std::exception &e) {
-        std::cerr << e.what() << "\n";
-    }
-}
-void Board::makeMove2(const Move &move) {
-
-    try {
-
-        static NullPiece nullPiece;
-        Piece* activePiece = &nullPiece;
-
-        static Rook rook;
-        static Bishop bishop;
-        static Queen queen;
-        static Knight knight;
-        static Pawn pawn;
-        static King kingToMove;
-
-        switch (move.getActivePiece()) {
-            case 'R':
-            case 'r':
-            {
-                activePiece = &rook;
-                break;
-            }
-            case 'B':
-            case 'b':
-            {
-                activePiece = &bishop;
-                break;
-            }
-            case 'Q':
-            case 'q':
-            {
-                activePiece = &queen;
-                break;
-            }
-            case 'N':
-            case 'n':
-            {
-                activePiece = &knight;
-                break;
-            }
-            case 'P':
-            case 'p':
-            {
-                activePiece = &pawn;
-                break;
-            }
-            case 'K':
-            case 'k':
-            {
-                activePiece = &kingToMove;
-                break;
-            }
-            case 'O':
-            case 'o':
-            {
-            if (castling_.IsCastlingPossible(move, vecBoardChar_)) {
-                    MakeMoveCastling(move);
-            }
-            else throw std::range_error("Such Castling is Invalid\n");
-
-            break;
-            }
-            default:
-            {
-                throw std::range_error("There is no such Piece\n");
-                break;
-            }
-        }
-        activePiece->SetName(move.getActivePiece());
-        activePiece->SetCoordinate(move.getStartCoordinate());
-
-        if (activePiece->IsProperMove(move, vecBoardChar_, this->GetEnPassant())) {
-
-            // Create testVec just to check the Hero's king is not under the check
-            std::vector<char> testVec = vecBoardChar_;
-            testVec[move.getStartCoordinate()] = '0';
-            testVec[move.getFinishCoordinate()] = move.getActivePiece();
-
-            King king;
-            if (islower(move.getActivePiece())) {
-                king.SetName('k');
-                king.SetCoordinate(FindTheKing('k', testVec));
-            }
-            else {
-                king.SetName('K');
-                king.SetCoordinate(FindTheKing('K', testVec));
-            }
-
-            if (!king.IsKingUnderCheck(testVec)) {
-                // The move is being made
-                vecBoardChar_[move.getStartCoordinate()] = '0';
-                vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
-                this->SetEnPassant(0);
-            }
-            else throw std::range_error("The Move is Invalid\nThe King is under check\n");
-        }
-        else throw std::range_error("The Move is Invalid\n");
-    }
-    // Exception Handling
     catch (const std::exception &e) {
         std::cerr << e.what() << "\n";
     }
@@ -538,87 +346,56 @@ void Board::moveCountPlusPlus() {
     this->SetGameLegend(legend);
 }
 
-void Board::makeMoveRook(const Move &move) {
-    vecBoardChar_[move.getStartCoordinate()] = '0';
-    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
+void Board::makeMovePiece(const Move &move) {
 
-    this->SetEnPassant(0);
+    // Pawn Move:
+    if (move.getActivePiece() == 'P' || move.getActivePiece() == 'p') {
 
-    this->moveCountPlusPlus();
-    castling_.SwitchState(move);
-}
-void Board::makeMoveBishop(const Move &move) {
-    vecBoardChar_[move.getStartCoordinate()] = '0';
-    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
+        // Check for en-Passant Opportunity on the next move.
+        // If en-Passant is possible, set enPassant_ value = field on the 3rd rank for White, 6th rank for Black
+        if (move.getActivePiece() == 'P' && move.getStartCoordinate() / 8 == 6 && move.getFinishCoordinate() / 8 == 4) {
 
-    this->SetEnPassant(0);
-
-    this->moveCountPlusPlus();
-}
-void Board::makeMoveQueen(const Move &move) {
-    vecBoardChar_[move.getStartCoordinate()] = '0';
-    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
-
-    this->SetEnPassant(0);
-
-    this->moveCountPlusPlus();
-}
-void Board::makeMoveKnight(const Move &move) {
-    vecBoardChar_[move.getStartCoordinate()] = '0';
-    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
-
-    this->SetEnPassant(0);
-
-    this->moveCountPlusPlus();
-}
-void Board::makeMovePawn(const Move &move) {
-
-    // Check for en-Passant Opportunity on the next move.
-    // If en-Passant is possible, set enPassant_ value = field on the 3rd rank for White, 6th rank for Black
-    if (move.getActivePiece() == 'P' && move.getStartCoordinate() / 8 == 6 && move.getFinishCoordinate() / 8 == 4) {
-
-        this->SetEnPassant(move.getStartCoordinate() - 8);
-    }
-    else {
-        if (move.getActivePiece() == 'p' && move.getStartCoordinate() / 8 == 1 && move.getFinishCoordinate() / 8 == 3) {
-
-            this->SetEnPassant(move.getStartCoordinate() + 8);
+            this->SetEnPassant(move.getStartCoordinate() - 8);
         }
         else {
-            this->SetEnPassant(0);
+            if (move.getActivePiece() == 'p' && move.getStartCoordinate() / 8 == 1 && move.getFinishCoordinate() / 8 == 3) {
+
+                this->SetEnPassant(move.getStartCoordinate() + 8);
+            }
+            else {
+                this->SetEnPassant(0);
+            }
+        }
+
+        // Check if the Pawn can be Promoted
+        if ((move.getActivePiece() == 'P' && move.getFinishCoordinate() / 8 == 0) || (move.getActivePiece() == 'p' && move.getFinishCoordinate() / 8 == 7)) {
+            char promotion;
+            promotion = pawnPromotion(move);
+            vecBoardChar_[move.getStartCoordinate()] = '0';
+            vecBoardChar_[move.getFinishCoordinate()] = promotion;
+        }
+        else {
+            vecBoardChar_[move.getStartCoordinate()] = '0';
+
+            // Manage en-Passand case for White
+            if (vecBoardChar_[move.getFinishCoordinate()] == '0' && move.getActivePiece() == 'P') {
+                vecBoardChar_[move.getFinishCoordinate() + 8] = '0';
+            }
+            // for Black
+            if (vecBoardChar_[move.getFinishCoordinate()] =='0' && move.getActivePiece() == 'p') {
+                vecBoardChar_[move.getFinishCoordinate() - 8] = '0';
+            }
+            vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
         }
     }
-
-    // Check if the Pawn can be Promoted
-    if ((move.getActivePiece() == 'P' && move.getFinishCoordinate() / 8 == 0) || (move.getActivePiece() == 'p' && move.getFinishCoordinate() / 8 == 7)) {
-        char promotion;
-        promotion = pawnPromotion(move);
-        vecBoardChar_[move.getStartCoordinate()] = '0';
-        vecBoardChar_[move.getFinishCoordinate()] = promotion;
-    }
+    // Another Piece Move:
     else {
         vecBoardChar_[move.getStartCoordinate()] = '0';
-
-        // Manage en-Passand case for White
-        if (vecBoardChar_[move.getFinishCoordinate()] == '0' && move.getActivePiece() == 'P') {
-            vecBoardChar_[move.getFinishCoordinate() + 8] = '0';
-        }
-        // for Black
-        if (vecBoardChar_[move.getFinishCoordinate()] =='0' && move.getActivePiece() == 'p') {
-            vecBoardChar_[move.getFinishCoordinate() - 8] = '0';
-        }
         vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
+
+        this->SetEnPassant(0);
     }
-    this->moveCountPlusPlus();
-}
-void Board::makeMoveKing(const Move &move) {
-    vecBoardChar_[move.getStartCoordinate()] = '0';
-    vecBoardChar_[move.getFinishCoordinate()] = move.getActivePiece();
 
-    this->SetEnPassant(0);
-
-    this->moveCountPlusPlus();
-    castling_.SwitchState(move);
 }
 void Board::MakeMoveCastling(const Move &move) {
 
@@ -658,9 +435,6 @@ void Board::MakeMoveCastling(const Move &move) {
     }
 
     this->SetEnPassant(0);
-    castling_.SwitchState(move);
-
-    this->moveCountPlusPlus();
 }
 
 char Board::pawnPromotion(const Move &move) {
@@ -676,7 +450,7 @@ char Board::pawnPromotion(const Move &move) {
     return promotion;
 }
 
-int Board::FindTheKing(char name, const std::vector<char>& vecChar) const {
+int Board::FindTheKing(char name, const std::vector<char> &vecChar) const {
     int res;
     for (int i=0; i<64; i++) {
         if (vecChar[i] == name) {
@@ -695,6 +469,70 @@ int Board::FindTheKing(char name) const {
     return res;
 }
 
+Piece& Board::GetPieceObject(const Move &move) const {
+
+    static NullPiece nullPiece;
+    Piece* activePiece = &nullPiece;
+
+    static Rook rook;
+    static Bishop bishop;
+    static Queen queen;
+    static Knight knight;
+    static Pawn pawn;
+    static King king;
+
+    switch (move.getActivePiece()) {
+        case 'R':
+        case 'r':
+        {
+            activePiece = &rook;
+            break;
+        }
+
+        case 'B':
+        case 'b':
+        {
+            activePiece = &bishop;
+            break;
+        }
+
+        case 'Q':
+        case 'q':
+        {
+            activePiece = &queen;
+            break;
+        }
+
+        case 'N':
+        case 'n':
+        {
+            activePiece = &knight;
+            break;
+        }
+
+        case 'P':
+        case 'p':
+        {
+            activePiece = &pawn;
+            break;
+        }
+
+        case 'K':
+        case 'k':
+        {
+            activePiece = &king;
+            break;
+        }
+
+        default:
+        {
+            break;
+        }
+    }
+    activePiece->SetName(move.getActivePiece());
+    activePiece->SetCoordinate(move.getStartCoordinate());
+    return *activePiece;
+}
 Piece& Board::GetSameColorPiece(char kingName, int coordinate) const {
 
     static NullPiece nullPiece;
